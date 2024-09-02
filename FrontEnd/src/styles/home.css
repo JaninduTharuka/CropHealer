@@ -1,0 +1,65 @@
+#brand {
+    font-weight:900;
+}
+
+.title {
+    text-align: center;
+    font-size: 4em;
+    padding: 1em;
+}
+
+
+p {
+    font-size: 1.2em;
+    margin: 1em;
+    text-align: center;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+
+img {
+    width: 100%;
+    height: 70vh;
+    object-fit: cover;
+}
+
+h5 {
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 2rem 0;
+}
+
+
+
+
+#features {
+    padding: 7% 12%;
+    position: relative;
+    text-align: center;
+}
+
+.feature-item {
+    padding: 5%;
+}
+
+#features i {
+    font-size: 4rem;
+    color: #436850;
+    padding-bottom: 1rem;
+}
+#features i:hover {
+    color: #12372A;
+}
+
+#features h3 {
+    font-size: 1.5rem;
+}
+
+#features p {
+    color: #8f8f8f;
+}

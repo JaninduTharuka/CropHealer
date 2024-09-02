@@ -1,6 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const { PythonShell } = require('python-shell');
+const axios = require('axios');
+const {exec} = require('child_process');
+
+const fs = require('fs');
+const path = require('path');
+const { time } = require('console');
+const { report } = require('process');
+// const os = require('os');
+// const tempfile = require('tempfile');
+
 
 const app = express();
 
@@ -24,9 +35,37 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    reports: {
+        type: Array,
+        default: []
     }
 });
 const User = mongoose.model('User', userSchema);
+
+
+function runPythonScript() {
+    // Replace with the path to your Python interpreter
+    const pythonPath = "C:/Users/janin/AppData/Local/Programs/Python/Python312/python.exe";
+    const scriptPath = 'models/predict.py';
+
+    console.log(`Python path: ${pythonPath}`);
+    console.log(`Script path: ${scriptPath}`);
+
+
+    console.log('Running Python script...');
+
+    exec(`${pythonPath} ${scriptPath}`, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error executing Python script: ${error}`);
+            return;
+        }
+        console.log(`Python script output: ${stdout}`);
+    });
+}
+
+// Call the function to run the Python script when the server starts
+runPythonScript();
 
 
 app.route('/login')
@@ -100,6 +139,52 @@ app.route('/user/:userId')
             });
     });
 
+
+
+app.route('/predict')
+    app.post('/predict', async (req, res) => {
+        const { image } = req.body;
+        console.log('Received image');
+
+        try {
+            const response = await axios.post('http://localhost:6000/predict', { image: image },
+                { headers: { 'Content-Type': 'application/json; charset=utf-8' }, responseType: 'json' }, timeout = 10000);
+            console.log('Response from Python server:', response.data);
+            const prediction = response.data;
+            res.status(200).json({ success: true, result: prediction });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ success: false, message: "Error occurred" });
+        }
+    });
+
+app.route('/report/:userId')
+    .post(async (req, res) => {
+        const userId = req.params.userId;
+        const report = req.body;
+        User.findById(userId)
+            .then((user) => {
+                if (user) {
+                    user.reports.push(report);
+                    user.save()
+                        .then(() => {
+                            res.status(200).json({ success: true });
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            res.status(500).json({ success: false, message: "Error occurred" });
+                        });
+                } else {
+                    res.status(404).json({ success: false, message: "User not found" });
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                res.status(500).json({ success: false, message: "Error occurred" });
+            });
+    });
+
+    
 
 app.listen(5000, () => {
     console.log('Server started on port 5000');

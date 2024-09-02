@@ -9,8 +9,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tensorflow/tfjs": "^4.20.0",
+    "axios": "^1.7.7",
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "mongoose": "^8.6.0"
+    "mongoose": "^8.6.0",
+    "python-shell": "^5.0.0",
+    "tempfile": "^5.0.0"
   }
 }
